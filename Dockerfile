@@ -21,11 +21,9 @@ COPY models/ /app/models/
 # Sagemaker specific: 
 # SageMaker looks for an executable specifically named 'serve' in the path for inference
 # We create a script that runs uvicorn
-COPY scripts/serve_sagemaker.sh /usr/local/bin/serve
-RUN chmod +x /usr/local/bin/serve
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint
+RUN chmod +x /usr/local/bin/entrypoint
 
-# Expose port 8080 (SageMaker default)
 EXPOSE 8080
 
-# The entrypoint is the serve script
-ENTRYPOINT ["serve"]
+ENTRYPOINT ["entrypoint"]
