@@ -1,6 +1,5 @@
 # 🛡️ Sentinelle: Deep Learning Fraud Detection Engine
 
-![Build Status](https://github.com/YOUR_USERNAME/fraud-detection-pipeline/actions/workflows/main.yml/badge.svg)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-311/)
 [![Docker](https://img.shields.io/badge/Docker-Enabled-blue)](https://www.docker.com/)
 
@@ -48,7 +47,7 @@ graph TD
 ```
 
 ## 📸 Dashboard Preview
-[!Dashboard](Screenshot.png)
+![Dashboard](Screenshot.png)
 The dashboard allows analysts to:
 
 * **Simulate Transactions**: Adjust Amount, Category, and Time.
