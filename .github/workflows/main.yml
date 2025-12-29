@@ -40,6 +40,11 @@ jobs:
     # We run train.py briefly to create them.
     - name: Generate Test Artifacts
       run: |
+        # Create the missing directories
+        mkdir -p data
+        mkdir -p models
+        
+        # Now run the scripts
         python -m src.data_gen
         python -m src.train
 
