@@ -1,0 +1,60 @@
+name: Fraud Detection Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-code:
+    runs-on: ubuntu-latest
+    
+    # 1. INJECT FAKE ENV VARS FOR TESTING
+    env:
+      APP_NAME: "Test App"
+      DEBUG_MODE: "True"
+      ANOMALY_THRESHOLD: "0.005"
+      INPUT_DIM: "8"
+      MODEL_PATH: "models/autoencoder.pth"
+      SCALER_PATH: "models/scaler.joblib"
+      ENCODER_PATH: "models/encoder.joblib"
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    # 2. GENERATE DUMMY ARTIFACTS
+    # The tests need .pth and .joblib files to exist, or loading will fail.
+    # We run train.py briefly to create them.
+    - name: Generate Test Artifacts
+      run: |
+        python -m src.data_gen
+        python -m src.train
+
+    - name: Run Unit Tests
+      run: |
+        pytest tests/
+
+  build-container:
+    needs: test-code
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      
+    - name: Build Docker Image
+      run: |
+        docker build -t fraud-detector:latest .
