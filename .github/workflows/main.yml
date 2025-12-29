@@ -36,21 +36,30 @@ jobs:
         pip install pytest
 
     # 2. GENERATE DUMMY ARTIFACTS
-    # The tests need .pth and .joblib files to exist, or loading will fail.
-    # We run train.py briefly to create them.
     - name: Generate Test Artifacts
       run: |
         # Create the missing directories
         mkdir -p data
         mkdir -p models
         
-        # Now run the scripts
+        # Now run the scripts to create the files
         python -m src.data_gen
         python -m src.train
 
     - name: Run Unit Tests
+      env:
+        PYTHONPATH: ${{ github.workspace }}
       run: |
         pytest tests/
+
+    # --- NEW STEP: SAVE ARTIFACTS ---
+    # We save the trained models so the next job can use them
+    - name: Upload Model Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: trained-models
+        path: models/
+        retention-days: 1
 
   build-container:
     needs: test-code
@@ -60,6 +69,17 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
       
+    # --- NEW STEP: RETRIEVE ARTIFACTS ---
+    # We download the models saved by the previous job
+    - name: Download Model Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: trained-models
+        path: models/
+      
     - name: Build Docker Image
       run: |
+        # Verify models exist before building (Optional debug step)
+        ls -R models/
+        
         docker build -t fraud-detector:latest .
