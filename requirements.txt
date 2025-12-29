@@ -15,3 +15,6 @@ pydantic==2.5.3 # Data validation for the API inputs
 requests==2.31.0 # For testing the API locally
 pydantic_settings
 pytest
+shap==0.44.1
+streamlit==1.31.0
+plotly==5.18.0

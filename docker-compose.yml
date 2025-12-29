@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  # The Backend
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    command: ["uvicorn", "src.api:app", "--host", "0.0.0.0", "--port", "8080"]
+
+  # The Frontend
+  dashboard:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - API_URL=http://api:8080
+    command: ["streamlit", "run", "src/dashboard.py", "--server.address", "0.0.0.0"]
+    depends_on:
+      - api
